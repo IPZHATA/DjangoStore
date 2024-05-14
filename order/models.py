@@ -10,10 +10,24 @@ class DeliveryOption(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
+    class Meta:
+        verbose_name_plural = "Delivery options"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
 
 class PaymentOption(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+
+    class Meta:
+        verbose_name_plural = "Payment options"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
