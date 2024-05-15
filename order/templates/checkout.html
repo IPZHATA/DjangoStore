@@ -1,0 +1,125 @@
+{% extends 'core/base.html' %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}Оформлення замовлення{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <h1 class="fw-bolder mb-4 text-center">Оформити замовлення</h1>
+    <div class="container px-4 px-lg-5 mt-5">
+       <div class="row gx-4 gx-lg-5 justify-content-center">
+           <div class="col-lg-8 col-xl-7">
+               <div class="row gy-2">
+                   {% for order_item in items %}
+                   <div class="col-12">
+                       <div class="card h-100">
+                           <div class="row g-0">
+                               <div class="col-md-4">
+                                   <a href="{% url 'item:detail' order_item.id %}">
+                                       <img class="img-fluid rounded-start" src="{{ order_item.image.url }}" alt="{{ order_item.name }}">
+                                   </a>
+                               </div>
+                               <div class="col-md-8">
+                                   <div class="row">
+                                       <div class="col-6">
+                                           <div class="card-body">
+                                               <h5 class="card-title">{{ order_item.name }}</h5>
+                                               <p class="card-text">ID: {{ order_item.id }}</p>
+                                           </div>
+                                       </div>
+                                       <div class="col-6">
+                                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                                 <div class="input-group mb-3 d-flex justify-content-center">
+                                                     <input class="form-control text-center me-3" type="num"
+                                                            value="1" style="max-width: 3rem" />
+                                                 </div>
+                                                <p class="card-text">{{ order_item.price }} Грн.</p>
+                                            </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   {% endfor %}
+               </div>
+           </div>
+       </div>
+    </div>
+
+    <div class="text-center">
+        <a href="#" class="btn btn-primary mt-3">Редагувати замовлення</a>
+    </div>
+
+
+<h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Поштове відділення</h1>
+
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-6 col-xl-6">
+                <div class="row">
+                    <div class="form-group">
+                        <div>
+                            <input type="radio" id="novaPoshta" name="delivery" value="novaPoshta">
+                            <label for="novaPoshta" style="font-size: larger;">Нова пошта</label>
+                            <div id="novaPoshtaOptions" style="display: none; margin-left: 20px; height: 200px; overflow-y: scroll;">
+                                <input type="radio" id="branch1" name="novaPoshtaBranch" value="branch1">
+                                <label for="branch1" style="font-size: larger;">Відділення 1</label><br>
+                                <input type="radio" id="branch2" name="novaPoshtaBranch" value="branch2">
+                                <label for="branch2" style="font-size: larger;">Відділення 2</label>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="radio" id="ukrPoshta" name="delivery" value="novaPoshta">
+                            <label for="novaPoshta" style="font-size: larger;">Нова пошта</label>
+                            <div id="ukrPoshtaOptions" style="display: none; margin-left: 20px; height: 200px; overflow-y: scroll;">
+                                <input type="radio" id="branch3" name="novaPoshtaBranch" value="branch1">
+                                <label for="branch1" style="font-size: larger;">Відділення 1</label><br>
+                                <input type="radio" id="branch4" name="novaPoshtaBranch" value="branch2">
+                                <label for="branch2" style="font-size: larger;">Відділення 2</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Оплата замовлення</h1>
+
+
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-lg-8 col-xl-7">
+            <form method="post" action="">
+              {% csrf_token %}
+              {% bootstrap_form payment_form %}
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Оплатити</button>
+                <a href="{% url 'item:detail' 1%}" class="btn btn-secondary">Повернутися</a>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+
+
+<script>
+    document.getElementById('novaPoshta').addEventListener('click', function() {
+        document.getElementById('novaPoshtaOptions').style.display = 'block';
+        document.getElementById('ukrPoshtaOptions').style.display = 'none';
+    });
+
+    document.getElementById('ukrPoshta').addEventListener('click', function() {
+        document.getElementById('ukrPoshtaOptions').style.display = 'block';
+        document.getElementById('novaPoshtaOptions').style.display = 'none';
+    });
+</script>
+
+</section>
+{% endblock %}
