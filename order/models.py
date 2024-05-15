@@ -5,41 +5,20 @@ from item.models import Item
 from django.core.validators import MinValueValidator
 
 
-class DeliveryProvider(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name_plural = "Delivery options"
-        ordering = ["name"]
+class Address(models.Model):
+    house = models.CharField(max_length=100)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.name
-
-
-# class PaymentOption(models.Model):
-#     name = models.CharField(max_length=100)
-#     description = models.TextField()
-#
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     modified_at = models.DateTimeField(auto_now=True)
-#
-#     class Meta:
-#         verbose_name_plural = "Payment options"
-#         ordering = ["name"]
-#
-#     def __str__(self):
-#         return self.name
+        return f"{self.state} - {self.city} - {self.street} - {self.house}"
 
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    delivery_option = models.ForeignKey(DeliveryProvider, on_delete=models.PROTECT)
-    #payment_option = models.ForeignKey(PaymentOption, on_delete=models.PROTECT)
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     paid = models.BooleanField(default=False)
 
