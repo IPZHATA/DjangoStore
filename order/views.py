@@ -1,42 +1,40 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from item.models import Item
 from .forms import AddressForm, PaymentForm
+from .models import Order, OrderItem
 
-
-# def checkout(request):
-#     item = Item.objects.filter(is_sold=False)[0]
-#     items = [item, item, item]
-#
-#     payment_form = PaymentForm()
-#     address_form = AddressForm()
-#
-#     return render(request, "checkout.html",
-#                   {
-#                       "items": items,
-#                       "payment_form": payment_form,
-#                       "address_form": address_form
-#                   })
 
 @login_required()
 def checkout(request):
 
-    item = Item.objects.filter(is_sold=False)[0]
-    items = [item, item, item]
+    items = Item.objects.filter(is_sold=False)[0:2]
 
     if request.method == 'POST':
-        address_form = AddressForm(request.POST, prefix='form_1')
-        payment_form = PaymentForm(request.POST, prefix='form_2')
-        if address_form.is_valid() and payment_form.is_valid():
-            return redirect('item:index')
+        address_form = AddressForm(request.POST)
+        if address_form.is_valid():
+
+            address = address_form.save()
+            total_price = sum(item.price for item in items.all())
+            order = Order.objects.create(user=request.user,
+                                         address=address,
+                                         total_price=total_price)
+
+            for item in items:
+                order_item = OrderItem.create_order_item_from_item(order, item)
+                order_item.save()
+
+            order.save()
+            #redirect('/redirect-success/')
+            return redirect('index')
     else:
-        address_form = AddressForm(prefix='form_1')
-        payment_form = PaymentForm(prefix='form_2')
+        address_form = AddressForm()
 
     return render(request, "checkout.html",
                   {
                       "items": items,
-                      "payment_form": payment_form,
                       "address_form": address_form
                   })
+
