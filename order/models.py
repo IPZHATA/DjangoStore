@@ -43,7 +43,7 @@ class OrderItem(models.Model):
     quantity = models.SmallIntegerField(default=1, validators=[MinValueValidator(1)])
 
     def __str__(self):
-        return f"Order: {self.id} - By: {self.order.user.username}"
+        return f"Order: {self.order.id} - Item: {self.item.name}"
 
     def get_cost(self):
         return self.item.price * Decimal(self.quantity)

@@ -21,10 +21,14 @@ class AddressForm(forms.ModelForm):
 
 
 class PaymentForm(forms.Form):
+    def __init__(self, *args, order=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.order = order
+
     card_number = forms.CharField(max_length=19,
                                   label='Номер картки',
                                   widget=forms.TextInput(attrs={'placeholder': 'XXXX-XXXX-XXXX-XXXX',
-                                                                'pattern': '[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}'}))
+                                                                'pattern': '[0-9]{4}-?[0-9]{4}-?[0-9]{4}-?[0-9]{4}'}))
     expiry_date = forms.CharField(max_length=5,
                                   label='Дійсна до',
                                   widget=forms.TextInput(

@@ -21,20 +21,35 @@ def checkout(request):
             order = Order.objects.create(user=request.user,
                                          address=address,
                                          total_price=total_price)
-
             for item in items:
                 order_item = OrderItem.create_order_item_from_item(order, item)
                 order_item.save()
 
             order.save()
-            #redirect('/redirect-success/')
-            return redirect('index')
+            return redirect('order:payment', order.id)
     else:
         address_form = AddressForm()
 
     return render(request, "checkout.html",
                   {
-                      "items": items,
-                      "address_form": address_form
-                  })
+                             "items": items,
+                             "address_form": address_form
+                          })
 
+
+def payment(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+
+    if order.paid:
+        return HttpResponse("You have already paid!")
+
+    if request.method == 'POST':
+        payment_form = PaymentForm(request.POST, order=order)
+        if payment_form.is_valid():
+            order.paid = True
+            order.save()
+            return redirect('index')
+    else:
+        payment_form = PaymentForm(order=order)
+
+    return render(request, 'payment.html', context={'form': payment_form})
