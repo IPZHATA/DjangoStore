@@ -8,18 +8,22 @@ from .models import Order, OrderItem
 from .service import OrderService
 
 
+@login_required()
 def index(request):
     orders = request.user.orders.all()
     return render(request, 'order/index.html', {'orders': orders})
 
 
 @login_required()
+def cancel(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    OrderService.cancel_order(order)
+    return redirect('order:index')
+
+
+@login_required()
 def detail(request, pk):
-    order = get_object_or_404(Order, pk=pk)
-
-    if request.user != order.user:
-        return HttpResponseForbidden("You do not have permission to view this order.")
-
+    order = get_object_or_404(Order, pk=pk, user=request.user)
     return render(request, 'order/detail.html', {'order': order})
 
 
@@ -45,10 +49,7 @@ def checkout(request):
 
 @login_required()
 def payment(request, pk):
-    order = get_object_or_404(Order, pk=pk)
-
-    if request.user != order.user:
-        return HttpResponseForbidden("You do not have permission to view this order.")
+    order = get_object_or_404(Order, pk=pk, user=request.user)
 
     if order.paid:
         return HttpResponse("You have already paid!")

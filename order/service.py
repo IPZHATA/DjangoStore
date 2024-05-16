@@ -8,6 +8,13 @@ from order.models import Order, Address, OrderItem
 class OrderService:
 
     @staticmethod
+    def cancel_order(order: Order):
+        """
+        Well, it just deletes order.
+        """
+        order.delete()
+
+    @staticmethod
     def create_order_from_items(user: User, address: Address, cart: List[Item]) -> Order:
         """
         Starts transaction that creates order and
