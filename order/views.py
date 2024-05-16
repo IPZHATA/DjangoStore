@@ -21,8 +21,6 @@ def detail(request, pk):
 @login_required()
 def checkout(request):
     items = Item.objects.filter(is_sold=False)[0:2]
-    errors = []
-    context = {'errors': errors, 'items': items}
 
     if request.method == 'POST':
         address_form = AddressForm(request.POST)
@@ -33,12 +31,11 @@ def checkout(request):
                 return redirect('order:payment', order.id)
 
             except Exception as e:
-                errors.append('error occured when making transaction, try again later.')
+                address_form.errors.append('error occured when making transaction, try again later.')
     else:
         address_form = AddressForm()
 
-    context['address_form'] = address_form
-    return render(request, "order/checkout.html", context)
+    return render(request, "order/checkout.html", {'items': items, 'address_form': address_form})
 
 
 @login_required()
@@ -52,11 +49,11 @@ def payment(request, pk):
         return HttpResponse("You have already paid!")
 
     if request.method == 'POST':
-        payment_form = PaymentForm(request.POST, order=order)
+        payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
             OrderService.pay_for_order(order)
             return redirect('index')
     else:
-        payment_form = PaymentForm(order=order)
+        payment_form = PaymentForm()
 
-    return render(request, 'order/payment.html', context={'form': payment_form})
+    return render(request, 'order/payment.html', context={'form': payment_form, 'order': order})

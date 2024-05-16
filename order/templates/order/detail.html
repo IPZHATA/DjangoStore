@@ -65,14 +65,12 @@
         </div>
         <div class="col-6">
             <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Товари</h1>
-            <div class="container px-0 px-lg-1 mt-5">
+            <div class="container px-2 px-lg-3">
                 <div class="row gx-1 gx-lg-2 justify-content-center">
-                    <div class="col-lg-10 col-xl-8">
-                        <div class="row gy-2">
-                            {% for order_item in order.items.all %}
-                                {% include 'order/ordered_item_element.html' %}
-                            {% endfor %}
-                        </div>
+                    <div class="row gy-2">
+                        {% for order_item in order.items.all %}
+                            {% include 'order/ordered_item_element.html' %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
