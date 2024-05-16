@@ -8,6 +8,11 @@ from .models import Order, OrderItem
 from .service import OrderService
 
 
+def index(request):
+    orders = request.user.orders.all()
+    return render(request, 'order/index.html', {'orders': orders})
+
+
 @login_required()
 def detail(request, pk):
     order = get_object_or_404(Order, pk=pk)
