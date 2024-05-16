@@ -20,10 +20,8 @@ def checkout(request):
         address_form = AddressForm(request.POST)
         if address_form.is_valid():
             address = address_form.save()
-            total_price = sum(item.price for item in items.all())
             order = Order.objects.create(user=request.user,
-                                         address=address,
-                                         total_price=total_price)
+                                         address=address)
             for item in items:
                 order_item = OrderItem.create_order_item_from_item(order, item)
                 order_item.save()
@@ -44,8 +42,7 @@ def payment(request, pk):
     if request.method == 'POST':
         payment_form = PaymentForm(request.POST, order=order)
         if payment_form.is_valid():
-            order.paid = True
-            order.save()
+            order.pay_for_order()
             return redirect('index')
     else:
         payment_form = PaymentForm(order=order)
