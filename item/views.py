@@ -25,6 +25,8 @@ def new(request):
             item.created_by = request.user
             item.save()
             return redirect("item:detail", pk=item.pk)
+        else:
+            print(form.errors)  # Вывод ошибок формы в консоль для отладки
     else:
         form = NewItemForm()
     return render(request, "item/form.html", {"form": form, "title": "New Item"})
@@ -38,7 +40,6 @@ def edit(request, pk):
         if form.is_valid():
             form.save()
             return redirect("item:detail", pk=item.pk)
-        print(form.errors)
     else:
         print("request method is not POST", request.method)
         form = EditItemForm(instance=item)
