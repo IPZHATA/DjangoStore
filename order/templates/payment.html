@@ -62,24 +62,31 @@
                 </div>
             </div>
         </div>
-        <div class="col-6">
-            <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Товари</h1>
-            <div class="container px-0 px-lg-1 mt-5">
-                <div class="row gx-1 gx-lg-2 justify-content-center">
-                    <div class="col-lg-10 col-xl-8">
-                        <div class="row gy-2">
-                            {% for order_item in form.order.items.all %}
-                                {% include 'ordered_item_element.html' %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+<div class="col-6">
+    <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Товари</h1>
+    <div class="container px-0 px-lg-1 mt-5">
+        <div class="row gx-1 gx-lg-2 justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+<div class="row gy-2">
+    {% for order_item in form.order.items.all %}
+        {% include 'ordered_item_element.html' %}
+    {% endfor %}
+    <div class="col">
+        <div class="row">
+            <div class="col-6">
+                <strong>Всього</strong>
             </div>
-            <!--<div class="text-center mt-3 d-flex justify-content-center">-->
-            <!--  <a href="#" class="btn btn-primary me-2">Редагувати корзину</a>-->
-            <!--  <a href="{% url 'item:detail' 1%}" class="btn btn-secondary">Повернутися до покупок</a>-->
-            <!--</div>-->
+            <div class="col-6 d-flex justify-content-end">
+                <span class="text-right font-weight-bold h4">{{ form.order.get_total_price }} Грн.</span>
+            </div>
         </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 </section>
 {% endblock %}
