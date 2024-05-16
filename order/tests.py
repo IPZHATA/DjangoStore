@@ -21,10 +21,11 @@ def address():
         zip_code='12345'
     )
 
+
 @pytest.fixture
 def category():
     return Category.objects.create(
-        name ="Some category 1"
+        name="Some category 1"
     )
 
 
@@ -47,8 +48,10 @@ def test_order_str_representation(user):
 @pytest.mark.django_db
 def test_order_total_price(user, address, item):
     order = Order.objects.create(user=user, address=address)
-    OrderItem.create_order_item_from_item(order, item)
-    assert Decimal(order.get_total_price) == Decimal(item.price)
+    order_item = OrderItem.create_order_item_from_item(order, item)
+    order_item.save()
+    expected_price = Decimal(str(item.price))
+    assert order.get_current_total_price == expected_price
 
 
 @pytest.mark.django_db
@@ -57,7 +60,7 @@ def test_pay_for_order(user, address, item):
     OrderItem.create_order_item_from_item(order, item)
     order.pay_for_order()
     assert order.paid is True
-    assert order.total_price == order.get_total_price
+    assert order.total_price == order.get_current_total_price
 
 
 @pytest.mark.django_db
@@ -71,7 +74,7 @@ def test_order_item_str_representation(user, address, item):
 def test_order_item_get_cost(user, address, item):
     order = Order.objects.create(user=user, address=address)
     order_item = OrderItem.create_order_item_from_item(order, item)
-    assert Decimal(order_item.get_cost()) == Decimal(item.price)
+    assert order_item.get_cost() == item.price
 
 
 @pytest.mark.django_db

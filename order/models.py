@@ -32,12 +32,20 @@ class Order(models.Model):
         return f"Order: {self.id} - By: {self.user.username} - Date: [{self.created_at}]"
 
     @property
-    def get_total_price(self):
+    def get_current_total_price(self) -> Decimal:
+        """
+        Returns sum of all prices of ordered items.
+        """
         total = sum(item.get_cost() for item in self.items.all())
+        total = Decimal(total)
         return total
 
-    def pay_for_order(self):
-        self.total_price = self.get_total_price
+    def pay_for_order(self) -> None:
+        """
+        Makes order paid status = True and saves
+        total price on paying moment
+        """
+        self.total_price = self.get_current_total_price
         self.paid = True
         self.save()
 
@@ -50,13 +58,20 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"Order: {self.order.id} - Item: {self.item.name}"
 
-    def get_cost(self):
-        return self.item.price * Decimal(self.quantity)
+    def get_cost(self) -> Decimal:
+        """
+        Returns item price multiplied by quantity.
+        """
+        return Decimal(self.item.price * self.quantity)
 
     def create_order_item_from_item(order, item):
-        order_item = OrderItem.objects.create(
+        """
+        Creates and returns order item based on item, with quantity = 1.
+        """
+        order_item = OrderItem(
             order=order,
             item=item,
             quantity=1
         )
         return order_item
+
