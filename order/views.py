@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
@@ -10,7 +10,11 @@ from .models import Order, OrderItem
 @login_required()
 def detail(request, pk):
     order = get_object_or_404(Order, pk=pk)
-    return render(request, 'detail.html', {'order': order})
+
+    if request.user != order.user:
+        return HttpResponseForbidden("You do not have permission to view this order.")
+
+    return render(request, 'order/detail.html', {'order': order})
 
 
 @login_required()
@@ -29,12 +33,15 @@ def checkout(request):
             return redirect('order:payment', order.id)
     else:
         address_form = AddressForm()
-    return render(request, "checkout.html", {"items": items, "address_form": address_form})
+    return render(request, "order/checkout.html", {"items": items, "address_form": address_form})
 
 
 @login_required()
 def payment(request, pk):
     order = get_object_or_404(Order, pk=pk)
+
+    if request.user != order.user:
+        return HttpResponseForbidden("You do not have permission to view this order.")
 
     if order.paid:
         return HttpResponse("You have already paid!")
@@ -47,4 +54,4 @@ def payment(request, pk):
     else:
         payment_form = PaymentForm(order=order)
 
-    return render(request, 'payment.html', context={'form': payment_form})
+    return render(request, 'order/payment.html', context={'form': payment_form})

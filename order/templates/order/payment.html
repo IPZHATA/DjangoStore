@@ -69,7 +69,7 @@
             <div class="col-lg-10 col-xl-8">
 <div class="row gy-2">
     {% for order_item in form.order.items.all %}
-        {% include 'ordered_item_element.html' %}
+        {% include 'order/ordered_item_element.html' %}
     {% endfor %}
     <div class="col">
         <div class="row">
