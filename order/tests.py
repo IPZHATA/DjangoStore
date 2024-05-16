@@ -4,6 +4,7 @@ import pytest
 from django.contrib.auth.models import User
 from .models import Address, Order, OrderItem
 from item.models import Item, Category
+from .service import OrderService
 
 
 @pytest.fixture
@@ -51,16 +52,16 @@ def test_order_total_price(user, address, item):
     order_item = OrderItem.create_order_item_from_item(order, item)
     order_item.save()
     expected_price = Decimal(str(item.price))
-    assert order.get_current_total_price == expected_price
+    assert order.get_current_total_price() == expected_price
 
 
 @pytest.mark.django_db
 def test_pay_for_order(user, address, item):
     order = Order.objects.create(user=user, address=address)
     OrderItem.create_order_item_from_item(order, item)
-    order.pay_for_order()
+    OrderService.pay_for_order(order)
     assert order.paid is True
-    assert order.total_price == order.get_current_total_price
+    assert order.total_price == order.get_current_total_price()
 
 
 @pytest.mark.django_db

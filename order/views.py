@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from item.models import Item
 from .forms import AddressForm, PaymentForm
 from .models import Order, OrderItem
+from .service import OrderService
 
 
 @login_required()
@@ -20,20 +21,24 @@ def detail(request, pk):
 @login_required()
 def checkout(request):
     items = Item.objects.filter(is_sold=False)[0:2]
+    errors = []
+    context = {'errors': errors, 'items': items}
+
     if request.method == 'POST':
         address_form = AddressForm(request.POST)
         if address_form.is_valid():
-            address = address_form.save()
-            order = Order.objects.create(user=request.user,
-                                         address=address)
-            for item in items:
-                order_item = OrderItem.create_order_item_from_item(order, item)
-                order_item.save()
-            order.save()
-            return redirect('order:payment', order.id)
+            try:
+                address = address_form.save(commit=False)
+                order = OrderService.create_order_from_items(request.user, address, items)
+                return redirect('order:payment', order.id)
+
+            except Exception as e:
+                errors.append('error occured when making transaction, try again later.')
     else:
         address_form = AddressForm()
-    return render(request, "order/checkout.html", {"items": items, "address_form": address_form})
+
+    context['address_form'] = address_form
+    return render(request, "order/checkout.html", context)
 
 
 @login_required()
@@ -49,7 +54,7 @@ def payment(request, pk):
     if request.method == 'POST':
         payment_form = PaymentForm(request.POST, order=order)
         if payment_form.is_valid():
-            order.pay_for_order()
+            OrderService.pay_for_order(order)
             return redirect('index')
     else:
         payment_form = PaymentForm(order=order)

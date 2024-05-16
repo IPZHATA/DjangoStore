@@ -1,5 +1,7 @@
 from decimal import Decimal
-from django.db import models
+from typing import List
+
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from item.models import Item
 from django.core.validators import MinValueValidator
@@ -31,7 +33,6 @@ class Order(models.Model):
     def __str__(self):
         return f"Order: {self.id} - By: {self.user.username} - Date: [{self.created_at}]"
 
-    @property
     def get_current_total_price(self) -> Decimal:
         """
         Returns sum of all prices of ordered items.
@@ -39,15 +40,6 @@ class Order(models.Model):
         total = sum(item.get_cost() for item in self.items.all())
         total = Decimal(total)
         return total
-
-    def pay_for_order(self) -> None:
-        """
-        Makes order paid status = True and saves
-        total price on paying moment
-        """
-        self.total_price = self.get_current_total_price
-        self.paid = True
-        self.save()
 
 
 class OrderItem(models.Model):
@@ -74,4 +66,3 @@ class OrderItem(models.Model):
             quantity=1
         )
         return order_item
-
