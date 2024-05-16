@@ -20,14 +20,21 @@ bootstrap_javascript %}
           {{item.price}} грн
         </div>
         <p class="lead">{{item.description}}</p>
+        {% if item.created_by == request.user %}
+        <div class="d-flex gap-3">
+          <a href="{% url 'item:delete' item.id %}" class="btn btn-danger">Видалити</a>
+          <a href="{% url  'item:edit' item.id %}" class="btn btn-dark">Редагувати</a>
+        </div>
+        {% else %}
         <div class="d-flex">
           <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1"
             style="max-width: 3rem" />
-          <button class="btn btn-outline-dark flex-shrink-0" type="button">
+          <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button">
             <i class="bi-cart-fill me-1"></i>
-            Add to cart
+            Додати до кошика
           </button>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -65,7 +72,7 @@ bootstrap_javascript %}
           <!-- Product actions-->
           <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
             <div class="text-center">
-              <a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a>
+              <a class="btn btn-outline-dark mt-auto" href="#">Додати до кошика</a>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.fields.files import ImageFile
+from django.db.models.fields.files import ImageField
 
 
 class Category(models.Model):
