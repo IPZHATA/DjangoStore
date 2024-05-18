@@ -1,6 +1,10 @@
 from decimal import Decimal
-from django.db import models
+from typing import List
+
+from django.db import models, transaction
 from django.contrib.auth.models import User
+
+from cart.models import CartItem
 from item.models import Item
 from django.core.validators import MinValueValidator
 
@@ -19,7 +23,7 @@ class Address(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
-    total_price = models.DecimalField(max_digits=8, decimal_places=2)
+    total_price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     paid = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -31,9 +35,12 @@ class Order(models.Model):
     def __str__(self):
         return f"Order: {self.id} - By: {self.user.username} - Date: [{self.created_at}]"
 
-    @property
-    def get_total_price(self):
+    def get_current_total_price(self) -> Decimal:
+        """
+        Returns sum of all prices of ordered items.
+        """
         total = sum(item.get_cost() for item in self.items.all())
+        total = Decimal(total)
         return total
 
 
@@ -45,13 +52,41 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"Order: {self.order.id} - Item: {self.item.name}"
 
-    def get_cost(self):
-        return self.item.price * Decimal(self.quantity)
+    def __eq__(self, other):
+        if not isinstance(other, OrderItem):
+            return False
+        return (
+                self.order == other.order
+                and self.item == other.item
+                and self.quantity == other.quantity
+        )
 
-    def create_order_item_from_item(order, item):
-        order_item = OrderItem.objects.create(
+    def get_cost(self) -> Decimal:
+        """
+        Returns item price multiplied by quantity.
+        """
+        return Decimal(self.item.price * self.quantity)
+
+    @staticmethod
+    def create_order_item_from_item(order: Order, item: Item):
+        """
+        Creates and returns order item based on item, with quantity = 1.
+        """
+        order_item = OrderItem(
             order=order,
             item=item,
             quantity=1
+        )
+        return order_item
+
+    @staticmethod
+    def create_order_item_from_cart_item(order: Order, cart_item: CartItem):
+        """
+        Creates and returns order item based on item, with quantity = 1.
+        """
+        order_item = OrderItem(
+            order=order,
+            item=cart_item.item,
+            quantity=cart_item.quantity
         )
         return order_item

@@ -12,9 +12,12 @@
 
     <div class="row">
         <div class="col-6">
-            <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Дані оплати</h1>
+            <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Дані замовлення</h1>
 
             <ul class="list-group">
+                <li class="list-group-item">
+                        <strong>Оформлено:</strong> {{ order.created_at }}
+                    </li>
                   {% if order.paid %}
                     <li class="list-group-item">
                         <strong>Вартість на момент оплати:</strong> {{ order.total_price}}
@@ -24,7 +27,7 @@
                     </li>
                   {% else %}
                     <li class="list-group-item">
-                        <strong>Поточна вартість:</strong> {{ order.get_total_price }}
+                        <strong>Поточна вартість:</strong> {{ order.get_current_total_price }}
                     </li>
                     <li class="list-group-item">
                         <strong>Оплачено:</strong> Ні
@@ -62,17 +65,20 @@
                     <p>Немає даних про адресу доставки.</p>
                 {% endif %}
             </div>
+
+            <div class="text-center mt-3 d-flex justify-content-center">
+                <a href="{% url 'order:cancel' order.id%}" class="btn btn-warning me-2">Скасувати замовлення</a>
+            </div>
+
         </div>
         <div class="col-6">
             <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Товари</h1>
-            <div class="container px-0 px-lg-1 mt-5">
+            <div class="container px-2 px-lg-3">
                 <div class="row gx-1 gx-lg-2 justify-content-center">
-                    <div class="col-lg-10 col-xl-8">
-                        <div class="row gy-2">
-                            {% for order_item in order.items.all %}
-                                {% include 'ordered_item_element.html' %}
-                            {% endfor %}
-                        </div>
+                    <div class="row gy-2">
+                        {% for order_item in order.items.all %}
+                            {% include 'order/ordered_item_element.html' %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
