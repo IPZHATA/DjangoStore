@@ -2,9 +2,9 @@ from decimal import Decimal
 
 import pytest
 from django.contrib.auth.models import User
-from .models import Address, Order, OrderItem
+from order.models import Address, Order, OrderItem
 from item.models import Item, Category
-from .service import OrderService
+from order.service import OrderService
 
 
 @pytest.fixture

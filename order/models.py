@@ -50,6 +50,15 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"Order: {self.order.id} - Item: {self.item.name}"
 
+    def __eq__(self, other):
+        if not isinstance(other, OrderItem):
+            return False
+        return (
+            self.order == other.order
+            and self.item == other.item
+            and self.quantity == other.quantity
+        )
+
     def get_cost(self) -> Decimal:
         """
         Returns item price multiplied by quantity.
