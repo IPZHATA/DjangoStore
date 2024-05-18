@@ -1,4 +1,4 @@
-version: '1.0'
+version: '3.8'
 
 services:
   web:
@@ -8,12 +8,3 @@ services:
     restart: always
     ports:
       - '8000:8000'
-    environment:
-      - DB_ENGINE=django.db.backends.sqlite3
-      - DB_NAME=/app/db.sqlite3
-  sqlite:
-    container_name: sqlite
-    image: python:3.11.4-slim-buster
-    command: "tail -f /dev/null"
-    volumes:
-      - ./db.sqlite3:/app/db.sqlite3
