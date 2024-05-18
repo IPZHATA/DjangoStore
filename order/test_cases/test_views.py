@@ -1,6 +1,8 @@
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
+
+from cart.service import CartService
 from order.models import Order, Address
 from item.models import Item, Category
 
@@ -53,16 +55,21 @@ class TestOrderViews:
         response = client.get(url)
         assert response.status_code == 200  # client’s request was successfully received
 
-    @pytest.mark.xfail
+    @pytest.mark.django_db
     def test_checkout_view(self, client, user, items, address):
         client.login(username='testuser', password='testpassword')
+        cart = CartService.get_or_create_cart(user)
+        CartService.add_item_to_cart(cart, items[0], 2)
+        CartService.add_item_to_cart(cart, items[1], 3)
         url = reverse('order:checkout')
-        response = client.get(url)
-        assert response.status_code == 200  # client’s request was successfully received
-
-        # Test creating an order
-        data = {'street': 'Test Street', 'city': 'Test City'}
-        response = client.post(url, data=data)
+        data = {
+            'street': 'Test Street',
+            'city': 'Test City',
+            'zip_code': '12334',
+            'state': 'kyiv',
+            'house': 'some house'
+        }
+        response = client.post(reverse('order:checkout'), data=data)
         assert response.status_code == 302  # Redirect to payment
 
     def test_payment_view(self, client, user, order):

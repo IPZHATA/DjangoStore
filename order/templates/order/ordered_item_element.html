@@ -3,7 +3,9 @@
         <div class="row g-0">
             <div class="col-md-4">
                 <a href="{% url 'item:detail' order_item.item.id %}">
-                <img class="img-fluid rounded-start" src="{{ order_item.item.image.url }}" alt="{{ order_item.item.name }}">
+        {% if order_item.item.image %}
+            <img class="img-fluid rounded-start" src="{{ order_item.item.image.url }}" alt="{{ order_item.item.name }}">
+        {% endif %}
                 </a>
             </div>
             <div class="col-md-8">

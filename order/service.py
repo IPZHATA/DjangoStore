@@ -36,8 +36,8 @@ class OrderService:
     def create_order_from_cart(address: Address, cart: Cart) -> Order:
         """
         Starts transaction that creates order and
-        order items in db, based on user, delivery address and
-        list of items. Returns created order.
+        order items in db, based on cart and address and.
+        Deletes cart after transaction, returns created order.
         """
         with transaction.atomic():
             if len(cart.items.all()) == 0:

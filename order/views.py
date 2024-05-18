@@ -36,7 +36,6 @@ def checkout(request):
         if address_form.is_valid():
             try:
                 address = address_form.save(commit=False)
-                #order = OrderService.create_order_from_items(request.user, address, items)
                 order = OrderService.create_order_from_cart(address, cart)
                 return redirect('order:payment', order.id)
 
