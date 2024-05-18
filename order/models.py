@@ -3,6 +3,8 @@ from typing import List
 
 from django.db import models, transaction
 from django.contrib.auth.models import User
+
+from cart.models import CartItem
 from item.models import Item
 from django.core.validators import MinValueValidator
 
@@ -54,9 +56,9 @@ class OrderItem(models.Model):
         if not isinstance(other, OrderItem):
             return False
         return (
-            self.order == other.order
-            and self.item == other.item
-            and self.quantity == other.quantity
+                self.order == other.order
+                and self.item == other.item
+                and self.quantity == other.quantity
         )
 
     def get_cost(self) -> Decimal:
@@ -65,7 +67,8 @@ class OrderItem(models.Model):
         """
         return Decimal(self.item.price * self.quantity)
 
-    def create_order_item_from_item(order, item):
+    @staticmethod
+    def create_order_item_from_item(order: Order, item: Item):
         """
         Creates and returns order item based on item, with quantity = 1.
         """
@@ -73,5 +76,17 @@ class OrderItem(models.Model):
             order=order,
             item=item,
             quantity=1
+        )
+        return order_item
+
+    @staticmethod
+    def create_order_item_from_cart_item(order: Order, cart_item: CartItem):
+        """
+        Creates and returns order item based on item, with quantity = 1.
+        """
+        order_item = OrderItem(
+            order=order,
+            item=cart_item.item,
+            quantity=cart_item.quantity
         )
         return order_item

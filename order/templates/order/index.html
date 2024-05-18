@@ -11,8 +11,10 @@
     <h1 class="fw-bolder mb-4 text-center" style="text-decoration: underline;">
         Замовлення
     </h1>
-
-  <div class="container px-4 px-lg-5 gy-2 mb-3"> <!-- Added mb-3 class for margin-bottom -->
+        {% if orders.count == 0 %}
+        <h3 class="mb-4 text-center">Немає жодного замовлення</h3>
+        {% else %}
+            <div class="container px-4 px-lg-5 gy-2 mb-3"> <!-- Added mb-3 class for margin-bottom -->
     {% for order in orders %}
     <div class="card h-100 gy-2">
         <div class="col gy-2">
@@ -94,6 +96,7 @@
         </div>
     </div>
     {% endfor %}
+        {% endif %}
 </div>
 
 </section>

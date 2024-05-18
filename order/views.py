@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
+from cart.service import CartService
 from item.models import Item
 from .forms import AddressForm, PaymentForm
 from .models import Order, OrderItem
@@ -29,14 +30,14 @@ def detail(request, pk):
 
 @login_required()
 def checkout(request):
-    items = Item.objects.filter(is_sold=False)[0:2]
-
+    cart = CartService.get_or_create_cart(request.user)
     if request.method == 'POST':
         address_form = AddressForm(request.POST)
         if address_form.is_valid():
             try:
                 address = address_form.save(commit=False)
-                order = OrderService.create_order_from_items(request.user, address, items)
+                #order = OrderService.create_order_from_items(request.user, address, items)
+                order = OrderService.create_order_from_cart(address, cart)
                 return redirect('order:payment', order.id)
 
             except Exception as e:
@@ -44,7 +45,12 @@ def checkout(request):
     else:
         address_form = AddressForm()
 
-    return render(request, "order/checkout.html", {'items': items, 'address_form': address_form})
+    items = cart.items.all()
+    total_price = cart.get_total_cost()
+    return render(request, "order/checkout.html", {
+        'items': items,
+        'address_form': address_form,
+        'total_price': total_price})
 
 
 @login_required()

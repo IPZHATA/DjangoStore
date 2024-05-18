@@ -12,9 +12,12 @@
 
     <div class="row">
         <div class="col-6">
-            <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Дані оплати</h1>
+            <h1 class="fw-bolder mb-4 text-center" style="margin-top: 3rem; padding-top: 1.5rem;">Дані замовлення</h1>
 
             <ul class="list-group">
+                <li class="list-group-item">
+                        <strong>Оформлено:</strong> {{ order.created_at }}
+                    </li>
                   {% if order.paid %}
                     <li class="list-group-item">
                         <strong>Вартість на момент оплати:</strong> {{ order.total_price}}
