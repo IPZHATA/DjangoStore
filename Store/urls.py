@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
 
@@ -12,6 +13,7 @@ urlpatterns = [
     path("contact/", contact, name="contact"),
     path('signup/', signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html', authentication_form=LoginForm), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path("admin/", admin.site.urls),
     path("items/", include("item.urls")),
     path("dashboard/", include("dashboard.urls")),
