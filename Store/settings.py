@@ -25,7 +25,11 @@ SECRET_KEY = "django-insecure-9*t1kkzyy@qe36tt8gh9-^4f!d7n&7dr-smaz+l_6z_4e8^%n2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['django-store-38382fc9e880.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['django-store-38382fc9e880.herokuapp.com', 'localhost', '127.0.0.1']
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Application definition
@@ -37,6 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "core",
+    "item",
+    "dashboard",
+    "order",
+    "cart",
+    "bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -62,6 +72,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "cart.context_processor.cart_size",
             ],
         },
     },
@@ -116,6 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
