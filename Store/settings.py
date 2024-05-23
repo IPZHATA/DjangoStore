@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['django-store-38382fc9e880.herokuapp.com', 'localhost', '127.0.0.1']
 
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 
 # Application definition
 
