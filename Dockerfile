@@ -8,6 +8,10 @@ COPY . /app
 WORKDIR /app
 
 ENV PORT=8000
-EXPOSE $PORT 8000
+EXPOSE $PORT
 
-CMD python manage.py migrate & python manage.py ensure_adminuser --username=admin --email=admin@example.com --password=pass & python manage.py runserver 0.0.0.0:$PORT
+RUN python manage.py migrate
+
+RUN python manage.py ensure_adminuser --username=admin --email=admin@example.com --password=pass
+
+CMD python manage.py runserver 0.0.0.0:$PORT
