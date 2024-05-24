@@ -25,3 +25,8 @@ class Command(BaseCommand):
             User.objects.create_superuser(username=options['username'],
                                           email=options['email'],
                                           password=options['password'])
+
+            newUser = User.objects.get(username=options['username'])
+
+            self.stdout.write(self.style.SUCCESS(f'New super user: {newUser.username} successfully created'))
+            print(f'New super user: {newUser.username} successfully created')
